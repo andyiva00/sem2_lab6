@@ -7,36 +7,39 @@
 #include <numeric>
 #include <algorithm>
 
-
 template <typename T>
-typename std::vector<T>::iterator FindRoughlyAverage(std::vector<T>& vector)
+typename std::vector<T>::iterator FindRoughlyAverage(std::vector<T>& v)
 {
-    double average = std::accumulate(vector.begin(), vector.end(), 0.0) / vector.size();
-    
-    auto maxless = std::max_element(vector.begin(), vector.end(), [&average](T a, T b) {return (a < b && (double)b < average); });
-    auto minover = std::min_element(vector.begin(), vector.end(), [&average](T a, T b) {return (a > b && (double)b < average); });
+	auto tmpV = v;
+	double average = std::accumulate(tmpV.begin(), tmpV.end(), 0.0) / tmpV.size();
 
-    std::cout << "average: " << average;
+	auto middle = std::partition(tmpV.begin(), tmpV.end(), [average](const auto& a) {return a < average; });
+	auto maxless = std::max_element(tmpV.begin(), middle);
+	auto minover = std::min_element(middle, tmpV.end());
 
-    return abs(average - (double)*maxless) < abs(average - (double)*minover)
-        ? maxless : minover;
+	//DEBUG info
+	std::cout << std::fixed << " average: " << average << ", max (less avg): " << *maxless << ", min (over avg): " << *minover << std::endl;
+
+	return std::abs(average - *maxless) < std::abs(average - *minover) ? std::find(v.begin(), v.end(), *maxless) : std::find(v.begin(), v.end(), *minover);
 }
 
 int main()
 {
-    //test case "int"
-    std::vector<int> vectorInt = { 0, 4, 23, 54, 64, 12 };
-    std::vector<int>::iterator itInt = FindRoughlyAverage(vectorInt);
-    std::cout << "Case 1. Roughly average: " << *itInt << " at index " << std::distance(vectorInt.begin(), itInt) << std::endl;
+	//test case 1. Vector of int values
+	std::cout << "Case 1 (int)" << std::endl;
+	std::vector<int> vectorInt = { 3, 14, 15, 92, 65, 53, 58, 97, 93, 23 };
+	std::vector<int>::iterator itInt = FindRoughlyAverage(vectorInt);
+	std::cout << std::fixed << " roughly average: " << *itInt << " at index " << std::distance(vectorInt.begin(), itInt) << std::endl;
 
-    //test case "float"
-    std::vector<float> vectorFloat = { 9.1f, 3.14f, 0.001f, 3.01f, 1.25f, 5.25f };
-    std::vector<float>::iterator itFloat = FindRoughlyAverage(vectorFloat);
-    std::cout << "Case 2. Roughly average: " << *itFloat << " at index " << std::distance(vectorFloat.begin(), itFloat) << std::endl;
+	//test case 2. Vector of float values
+	std::cout << "Case 2 (float)" << std::endl;
+	std::vector<float> vectorFloat = { 0.5772156649f, 0.153286060f, 6.512090082f, 4.024310421f, 5.933593992f, 3.598805767f };
+	std::vector<float>::iterator itFloat = FindRoughlyAverage(vectorFloat);
+	std::cout << std::fixed << " roughly average: " << *itFloat << " at index " << std::distance(vectorFloat.begin(), itFloat) << std::endl;
 
-    //test case "double"
-    std::vector<double> vectorDouble = { 151.16416561f , 11.467161f, 97.1054167f, 70.99999f, 115.941670f, 11.3616651f, 41.61238f };
-    std::vector<double>::iterator itDouble = FindRoughlyAverage(vectorDouble);
-    std::cout << "Case 3. Roughly average: " << *itDouble << " at index " << std::distance(vectorDouble.begin(), itDouble) << std::endl;
-
+	//test case 3. Vector of double values
+	std::cout << "Case 3 (double)" << std::endl;
+	std::vector<double> vectorDouble = { 16180339887.4989484820, 4586834365.6381177203, 0917980576.2862135448, 6227052604.6281890244, 9707207204.1893911374, 8475408807.5386891752 };
+	std::vector<double>::iterator itDouble = FindRoughlyAverage(vectorDouble);
+	std::cout << std::fixed << " roughly average: " << *itDouble << " at index " << std::distance(vectorDouble.begin(), itDouble) << std::endl;
 }
