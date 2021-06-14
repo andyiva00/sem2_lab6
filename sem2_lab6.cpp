@@ -7,6 +7,7 @@
 #include <numeric>
 #include <algorithm>
 #include <forward_list>
+#include <set>
 
 template <typename T>
 typename std::vector<T>::iterator FindRoughlyAverage(std::vector<T>& v)
@@ -25,14 +26,15 @@ typename std::vector<T>::iterator FindRoughlyAverage(std::vector<T>& v)
 }
 
 template <typename T>
-typename std::vector<T> UniqueElements(std::forward_list<T>& l)
+ std::forward_list<T> UniqueElements(std::forward_list<T>& l)
 {
-	std::vector<T> v{ std::begin(l), std::end(l) };
-	std::sort(v.begin(), v.end());
-	auto last = std::unique(v.begin(), v.end());
-	v.erase(last, v.end());
+	std::set<T> tmpS;
+	for_each(l.begin(), l.end(), [tmpS](const auto& a) {if (tmpS.count(a)) { tmpS.insert(a); } });
+	//std::sort(v.begin(), v.end());
+	//auto last = std::unique(v.begin(), v.end());
+	//v.erase(last, v.end());
 
-	return v;
+	return l;
 }
 
 template <typename T>
@@ -88,21 +90,21 @@ int main()
 	std::cout << "Case 2.1 (int)" << std::endl;
 	std::forward_list<int> listInt = { 3,1,4,1,5,9,2,6,5,5,3,5,8,9,7,9,3,2,3 };
 	std::cout << " source forward list: " << listInt << std::endl;
-	std::vector<int> vectorUniqueInt = UniqueElements(listInt);
-	std::cout << " vector of unique elements: " << vectorUniqueInt << std::endl;
+	std::forward_list<int> listUniqueInt = UniqueElements(listInt);
+	std::cout << " vector of unique elements: " << listUniqueInt << std::endl;
 
 	//test case 2.2. Forward list of int values
 	std::cout << "Case 2.1 (float)" << std::endl;
 	std::forward_list<float> listFloat = { 5.1f, 3.5f, 2.2f, 5.1f, 3.0f, 7.8f, 3.5f, 5.1f };
 	std::cout << std::fixed << " source forward list: " << listFloat << std::endl;
-	std::vector<float> vectorUniqueFloat = UniqueElements(listFloat);
-	std::cout << std::fixed << " vector of unique elements: " << vectorUniqueFloat << std::endl;
+	std::forward_list<float> listUniqueFloat = UniqueElements(listFloat);
+	std::cout << std::fixed << " vector of unique elements: " << listUniqueFloat << std::endl;
 
 	//test case 2.3. Forward list of string values
 	std::cout << "Case 2.1 (string)" << std::endl;
 	std::forward_list<std::string> listString = { "lorem", "ipsum", "dolor", "sit", "amet", "consectetur", "adipiscing", "elit", "aenean", "dapibus", "leo", "a", "velit", "gravida", "imperdiet", "et", "et", "massa", "praesent", "a", "enim", "elementum", "convallis", "diam", "ut", "suscipit", "nulla"};
 	std::cout << std::fixed << " source forward list: " << listString << std::endl;
-	std::vector<std::string> vectorUniqueString = UniqueElements(listString);
-	std::cout << std::fixed << " vector of unique elements: " << vectorUniqueString << std::endl;
+	std::forward_list<std::string> listUniqueString = UniqueElements(listString);
+	std::cout << std::fixed << " vector of unique elements: " << listUniqueString << std::endl;
 
 }
