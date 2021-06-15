@@ -3,11 +3,24 @@
 // Student: Timofeev Denis
 
 #include <iostream>
-#include <vector>
 #include <numeric>
 #include <algorithm>
+#include <thread>
+#include <vector>
 #include <forward_list>
 #include <set>
+
+template <typename T>
+void FindMaxLess(std::vector<T> &v, typename std::vector<T>::iterator itMiddle, typename std::vector<T>::iterator &itMaxLess)
+{
+	itMaxLess = std::max_element(v.begin(), itMiddle);
+}
+
+template <typename T>
+void FindMinOver(typename std::vector<T>::iterator itMiddle, std::vector<T>& v, typename std::vector<T>::iterator &itMinOver)
+{
+	itMinOver = std::min_element(itMiddle, v.end());
+}
 
 template <typename T>
 typename std::vector<T>::iterator FindRoughlyAverage(std::vector<T>& v)
@@ -16,7 +29,7 @@ typename std::vector<T>::iterator FindRoughlyAverage(std::vector<T>& v)
 	double average = std::accumulate(tmpV.begin(), tmpV.end(), 0.0) / tmpV.size();
 
 	auto middle = std::partition(tmpV.begin(), tmpV.end(), [average](const auto& a) {return a < average; });
-	auto maxless = std::max_element(tmpV.begin(), middle);
+	auto maxless = std::max_element(tmpV.begin(), middle); //std::execution::par
 	auto minover = std::min_element(middle, tmpV.end());
 
 	//DEBUG info
@@ -26,7 +39,7 @@ typename std::vector<T>::iterator FindRoughlyAverage(std::vector<T>& v)
 }
 
 template <typename T>
- std::forward_list<T> UniqueElements(std::forward_list<T>& l)
+std::forward_list<T> UniqueElements(std::forward_list<T>& l)
 {
 	std::set<T> tmpS;
 	std::copy_if(l.begin(), l.end(), std::inserter(tmpS, tmpS.begin()), [tmpS](auto a) {return (tmpS.count(a)==0); });
